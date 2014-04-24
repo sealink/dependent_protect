@@ -27,7 +27,7 @@ module ActiveRecord
 
     def detailed_message
       count = @record.send(@name).count
-      examples = @record.send(@name).all(:limit => 5).map{|o| "#{o.id}: #{o.to_s}"}
+      examples = @record.send(@name).limit(5).map{|o| "#{o.id}: #{o.to_s}"}
       examples[4] = "...#{I18n.t('dependent_restrict.detailed_message.and_more', :count => count - 4, :default => "and #{count-4} more")}" if count > 5
 
       basic_message + "\n\n\n#{I18n.t('dependent_restrict.detailed_message.includes', :default => "These include")}:\n#{examples.join("\n")}"
