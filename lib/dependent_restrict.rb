@@ -24,7 +24,7 @@ module DependentRestrict
     def has_one_with_restrict(*args) #:nodoc:
       reflection = if active_record_4?
         association_id, options, scope, extension = *args
-        create_reflection(:has_one, association_id, options || {}, scope || {}, self)
+        ActiveRecord::Reflection.create(:has_one, association_id, options || {}, scope || {}, self)
       else
         association_id, options, extension = *args
         create_reflection(:has_one, association_id, options || {}, self)
@@ -35,7 +35,7 @@ module DependentRestrict
 
     def has_many_with_restrict(association_id, options = {}, &extension) #:nodoc:
       reflection = if active_record_4?
-        create_reflection(:has_many, association_id, options, scope ||= {}, self)
+        ActiveRecord::Reflection.create(:has_many, association_id, options, scope ||= {}, self)
       else
         create_reflection(:has_many, association_id, options, self)
       end
@@ -44,7 +44,11 @@ module DependentRestrict
     end
 
     def has_and_belongs_to_many_with_restrict(association_id, options = {}, &extension)
-      reflection = create_reflection(:has_and_belongs_to_many, association_id, options, self)
+      reflection = if active_record_4?
+        ActiveRecord::Reflection.create(:has_and_belongs_to_many, association_id, options, scope ||= {}, self)
+      else
+        create_reflection(:has_and_belongs_to_many, association_id, options, self)
+      end
       add_dependency_callback!(reflection, options)
       options.delete(:dependent)
       has_and_belongs_to_many_without_restrict(association_id, options, &extension)
