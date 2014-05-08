@@ -2,7 +2,7 @@ require 'active_record'
 require 'dependent_restrict/delete_restriction_error'
 
 module DependentRestrict
-  VERSION = '0.1.2'
+  VERSION = '0.2.0'
 
   def self.included(base)
     super
@@ -24,7 +24,7 @@ module DependentRestrict
     def has_one_with_restrict(*args) #:nodoc:
       reflection = if active_record_4?
         association_id, options, scope, extension = *args
-        ActiveRecord::Reflection.create(:has_one, association_id, options || {}, scope || {}, self)
+        restrict_create_reflection(:has_one, association_id, options || {}, scope || {}, self)
       else
         association_id, options, extension = *args
         create_reflection(:has_one, association_id, options || {}, self)
@@ -35,7 +35,7 @@ module DependentRestrict
 
     def has_many_with_restrict(association_id, options = {}, &extension) #:nodoc:
       reflection = if active_record_4?
-        ActiveRecord::Reflection.create(:has_many, association_id, options, scope ||= {}, self)
+        restrict_create_reflection(:has_many, association_id, options, scope ||= {}, self)
       else
         create_reflection(:has_many, association_id, options, self)
       end
@@ -45,7 +45,7 @@ module DependentRestrict
 
     def has_and_belongs_to_many_with_restrict(association_id, options = {}, &extension)
       reflection = if active_record_4?
-        ActiveRecord::Reflection.create(:has_and_belongs_to_many, association_id, options, scope ||= {}, self)
+        restrict_create_reflection(:has_and_belongs_to_many, association_id, options, scope ||= {}, self)
       else
         create_reflection(:has_and_belongs_to_many, association_id, options, self)
       end
@@ -83,6 +83,14 @@ module DependentRestrict
 
     def active_record_4?
       ::ActiveRecord::VERSION::MAJOR == 4
+    end
+
+    def restrict_create_reflection(*args)
+      if ActiveRecord::Reflection.respond_to? :create
+        ActiveRecord::Reflection.create *args
+      else
+        create_reflection(*args)
+      end
     end
 
   end
