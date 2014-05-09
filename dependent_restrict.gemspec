@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'dependent_restrict'
-  s.version           = '0.2.0'
-  s.date              = '2014-05-08'
+  s.version           = '0.2.1'
+  s.date              = '2014-05-09'
   s.rubyforge_project = 'dependent_restrict'
 
   ## Make sure your summary is short. The description may be as long
@@ -66,7 +66,8 @@ Gem::Specification.new do |s|
     dependent_restrict.gemspec
     gemfiles/rails2.gemfile
     gemfiles/rails3.gemfile
-    gemfiles/rails4.gemfile
+    gemfiles/rails4_0.gemfile
+    gemfiles/rails4_1.gemfile
     lib/dependent_restrict.rb
     lib/dependent_restrict/delete_restriction_error.rb
     spec/dependent_restrict_spec.rb
