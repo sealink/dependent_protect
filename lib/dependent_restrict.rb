@@ -45,6 +45,7 @@ module DependentRestrict
 
     def has_and_belongs_to_many_with_restrict(association_id, options = {}, &extension)
       reflection = if active_record_4?
+        raise ArgumentError, "dependent_restrict doesn't work with has_and_belongs_to_many. Use equivalent rails 4.1 has_many :through" if ActiveRecord::Reflection.respond_to? :create
         restrict_create_reflection(:has_and_belongs_to_many, association_id, options, scope ||= {}, self)
       else
         create_reflection(:has_and_belongs_to_many, association_id, options, self)

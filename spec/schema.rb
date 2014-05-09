@@ -11,5 +11,12 @@ ActiveRecord::Schema.define(:version => 1) do
     t.integer :category_id
     t.boolean :active
   end
+
+  create_table :product do |t|
+  end
+
+  create_table :products_categories do |t|
+    t.integer :product_id, :category_id
+  end
 end
 

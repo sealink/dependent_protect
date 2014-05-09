@@ -31,6 +31,19 @@ describe DependentRestrict do
           "Category #{id}"
         end
       end
+
+      class ProductsCategory < ActiveRecord::Base
+        belongs_to :product
+        belongs_to :category
+      end
+
+      class Product < ActiveRecord::Base
+        if ActiveRecord::Reflection.respond_to? :create
+          has_many :categories, :through => :products_categories
+        else
+          has_and_belongs_to_many :categories
+        end
+      end
     end
 
     after do
