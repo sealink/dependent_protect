@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 gemspec :path => '../'
 
 group :development, :test do
@@ -9,4 +9,5 @@ group :development, :test do
   gem 'simplecov-rcov'
   gem 'sqlite3'
   gem 'activerecord', '~> 3.2.0'
+  gem 'mime-types', '< 2.0', :platforms => :ruby_18 # coveralls
 end
