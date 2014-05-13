@@ -35,10 +35,12 @@ describe DependentRestrict do
           has_and_belongs_to_many :categories
         end
       end
+
     end
 
     after do
-      %w(OrderInvoice Order Category).each { |klass| Object.send(:remove_const, klass) }
+      [OrderInvoice, Order, Category, ProductsCategory, Product].each(&:delete_all)
+      %w(OrderInvoice Order Category ProductsCategory Product).each { |klass| Object.send(:remove_const, klass) }
     end
 
 

@@ -21,51 +21,63 @@ module DependentRestrict
     # We should be aliasing configure_dependency_for_has_many but that method
     # is private so we can't. We alias has_many instead trying to be as fair
     # as we can to the original behaviour.
-    def has_one_with_restrict(*args) #:nodoc:
+    def has_one_with_restrict(*args, &extension)
+      options = args.extract_options! || {}
       reflection = if active_record_4?
-        association_id, options, scope, extension = *args
-        restrict_create_reflection(:has_one, association_id, options || {}, scope || {}, self)
+        association_id, scope = *args
+        restrict_create_reflection(:has_one, association_id, scope || {}, options, self)
       else
-        association_id, options, extension = *args
-        create_reflection(:has_one, association_id, options || {}, self)
+        association_id = args[0]
+        create_reflection(:has_one, association_id, options, self)
       end
-      add_dependency_callback!(reflection, options || {})
-      has_one_without_restrict(*args) #association_id, options, &extension)
+      add_dependency_callback!(reflection, options)
+      args << options
+      has_one_without_restrict(*args, &extension)
     end
 
-    def has_many_with_restrict(association_id, options = {}, &extension) #:nodoc:
+    def has_many_with_restrict(*args, &extension)
+      options = args.extract_options! || {}
       reflection = if active_record_4?
-        restrict_create_reflection(:has_many, association_id, options, scope ||= {}, self)
+        association_id, scope = *args
+        restrict_create_reflection(:has_many, association_id, scope || {}, options, self)
       else
+        association_id = *args
         create_reflection(:has_many, association_id, options, self)
       end
       add_dependency_callback!(reflection, options)
-      has_many_without_restrict(association_id, options, &extension)
+      args << options
+      has_many_without_restrict(*args, &extension)
     end
 
-    def has_and_belongs_to_many_with_restrict(association_id, options = {}, &extension)
+    def has_and_belongs_to_many_with_restrict(*args, &extension)
+      options = args.extract_options! || {}
       reflection = if active_record_4?
         raise ArgumentError, "dependent_restrict doesn't work with has_and_belongs_to_many. Use equivalent rails 4.1 has_many :through" if ActiveRecord::Reflection.respond_to? :create
-        restrict_create_reflection(:has_and_belongs_to_many, association_id, options, scope ||= {}, self)
+        association_id, scope = *args
+        restrict_create_reflection(:has_and_belongs_to_many, association_id, scope || {}, options, self)
       else
+        association_id = *args
         create_reflection(:has_and_belongs_to_many, association_id, options, self)
       end
       add_dependency_callback!(reflection, options)
       options.delete(:dependent)
-      has_and_belongs_to_many_without_restrict(association_id, options, &extension)
+      args << options
+      has_and_belongs_to_many_without_restrict(*args, &extension)
     end
 
     private
 
     def add_dependency_callback!(reflection, options)
       dependent_type = active_record_4? ? options[:dependent] : reflection.options[:dependent]
-      method_name = "dependent_#{dependent_type}_for_#{reflection.name}"
+      name = reflection.name
+      name = name.first if name.is_a?(Array) # rails 3
+      method_name = "dependent_#{dependent_type}_for_#{name}"
       case dependent_type
       when :rollback, :restrict_with_error
         options.delete(:dependent)
         define_method(method_name) do
           method = reflection.collection? ? :empty? : :nil?
-          unless send(reflection.name).send(method)
+          unless send(name).send(method)
             raise ActiveRecord::Rollback
           end
         end
@@ -74,8 +86,8 @@ module DependentRestrict
         options.delete(:dependent)
         define_method(method_name) do
           method = reflection.collection? ? :empty? : :nil?
-          unless send(reflection.name).send(method)
-            raise ActiveRecord::DetailedDeleteRestrictionError.new(reflection.name, self)
+          unless send(name).send(method)
+            raise ActiveRecord::DetailedDeleteRestrictionError.new(name, self)
           end
         end
         before_destroy method_name

@@ -12,7 +12,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.boolean :active
   end
 
-  create_table :product do |t|
+  create_table :products do |t|
   end
 
   create_table :products_categories do |t|

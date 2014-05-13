@@ -1,6 +1,11 @@
 Dependent Restrict
 ==================
 
+[![Build Status](https://travis-ci.org/sealink/dependent_restrict.png?branch=master)](https://travis-ci.org/sealink/dependent_restrict)
+[![Coverage Status](https://coveralls.io/repos/sealink/dependent_restrict/badge.png)](https://coveralls.io/r/sealink/dependent_restrict)
+[![Dependency Status](https://gemnasium.com/sealink/dependent_restrict.png?travis)](https://gemnasium.com/sealink/dependent_restrict)
+[![Code Climate](https://codeclimate.com/github/sealink/dependent_restrict.png)](https://codeclimate.com/github/sealink/dependent_restrict)
+
 A gem for rails 2, 3 and 4 that retrofits and improves rails 4 functionality
 
 Rails 4 offers 2 very useful dependent restrictions:
