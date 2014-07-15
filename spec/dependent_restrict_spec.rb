@@ -57,6 +57,8 @@ describe DependentRestrict do
                 self.select(&:active?)
               end
             end
+
+            has_many :order_invoices, :through => :orders
           end
         }.to_not raise_error
       end
@@ -75,7 +77,17 @@ describe DependentRestrict do
               self.select(&:active?)
             end
           end
+
+          has_many :order_invoices, :through => :orders, :dependent => :restrict_with_exception
         end
+      end
+
+      it 'should create the reflections on Order' do
+        expect(Order.reflect_on_all_associations.map(&:name)).to eq [:category, :order_invoice]
+      end
+
+      it 'should create the reflections on Category' do
+        expect(Category.reflect_on_all_associations.map(&:name)).to eq [:orders, :order_invoices]
       end
 
       it 'should restrict has_many relationships' do

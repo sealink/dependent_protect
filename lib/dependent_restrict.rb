@@ -41,7 +41,7 @@ module DependentRestrict
         association_id, scope = *args
         restrict_create_reflection(:has_many, association_id, scope || {}, options, self)
       else
-        association_id = *args
+        association_id = args.first
         create_reflection(:has_many, association_id, options, self)
       end
       add_dependency_callback!(reflection, options)
@@ -56,7 +56,7 @@ module DependentRestrict
         association_id, scope = *args
         restrict_create_reflection(:has_and_belongs_to_many, association_id, scope || {}, options, self)
       else
-        association_id = *args
+        association_id = args.first
         create_reflection(:has_and_belongs_to_many, association_id, options, self)
       end
       add_dependency_callback!(reflection, options)
