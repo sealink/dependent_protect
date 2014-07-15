@@ -4,7 +4,7 @@ gemspec
 group :development, :test do
   gem 'rake', '~> 0.9.2'
   gem 'rdoc', '~> 3.12'
-  gem 'rspec'
+  gem 'rspec', '~> 2.99.0'
   gem 'simplecov'
   gem 'simplecov-rcov'
   gem 'sqlite3'
