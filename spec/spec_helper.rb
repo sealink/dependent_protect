@@ -12,10 +12,14 @@ MINIMUM_COVERAGE = 81
 
 if ENV['COVERAGE']
   require 'simplecov'
+  require 'simplecov-rcov'
   require 'coveralls'
   Coveralls.wear!
 
-  SimpleCov.formatter = Coveralls::SimpleCov::Formatter
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+    SimpleCov::Formatter::RcovFormatter,
+    Coveralls::SimpleCov::Formatter
+  ]
   SimpleCov.start do
     add_filter '/vendor/'
     add_filter '/spec/'
