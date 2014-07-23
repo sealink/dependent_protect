@@ -1,6 +1,7 @@
 Dependent Restrict
 ==================
 
+[![Gem Version](https://badge.fury.io/rb/dependent_restrict.png)](http://badge.fury.io/rb/dependent_restrict)
 [![Build Status](https://travis-ci.org/sealink/dependent_restrict.png?branch=master)](https://travis-ci.org/sealink/dependent_restrict)
 [![Coverage Status](https://coveralls.io/repos/sealink/dependent_restrict/badge.png)](https://coveralls.io/r/sealink/dependent_restrict)
 [![Dependency Status](https://gemnasium.com/sealink/dependent_restrict.png?travis)](https://gemnasium.com/sealink/dependent_restrict)
