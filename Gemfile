@@ -2,12 +2,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem 'rake', '~> 0.9.2'
-  gem 'rdoc', '~> 3.12'
-  gem 'rspec', '~> 2.99.0'
-  gem 'simplecov'
-  gem 'simplecov-rcov'
-  gem 'sqlite3'
   gem 'activerecord', '~> 4.0.0'
   gem 'mime-types', '< 2.0', :platforms => :ruby_18 # coveralls
 end
