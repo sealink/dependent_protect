@@ -18,49 +18,57 @@ module DependentRestrict
   end
 
   module ClassMethods
+    VALID_DEPENDENTS = [:rollback, :restrict_with_error, :restrict, :restrict_with_exception]
+
     # We should be aliasing configure_dependency_for_has_many but that method
     # is private so we can't. We alias has_many instead trying to be as fair
     # as we can to the original behaviour.
     def has_one_with_restrict(*args, &extension)
       options = args.extract_options! || {}
-      reflection = if active_record_4?
-        association_id, scope = *args
-        restrict_create_reflection(:has_one, association_id, scope || {}, options, self)
-      else
-        association_id = args[0]
-        create_reflection(:has_one, association_id, options, self)
+      if VALID_DEPENDENTS.include?(options[:dependent].try(:to_sym))
+        reflection = if active_record_4?
+          association_id, scope = *args
+          restrict_create_reflection(:has_one, association_id, scope || {}, options, self)
+        else
+          association_id = args[0]
+          create_reflection(:has_one, association_id, options, self)
+        end
+        add_dependency_callback!(reflection, options)
       end
-      add_dependency_callback!(reflection, options)
       args << options
       has_one_without_restrict(*args, &extension)
     end
 
     def has_many_with_restrict(*args, &extension)
       options = args.extract_options! || {}
-      reflection = if active_record_4?
-        association_id, scope = *args
-        restrict_create_reflection(:has_many, association_id, scope || {}, options, self)
-      else
-        association_id = args.first
-        create_reflection(:has_many, association_id, options, self)
+      if VALID_DEPENDENTS.include?(options[:dependent].try(:to_sym))
+        reflection = if active_record_4?
+          association_id, scope = *args
+          restrict_create_reflection(:has_many, association_id, scope || {}, options, self)
+        else
+          association_id = args.first
+          create_reflection(:has_many, association_id, options, self)
+        end
+        add_dependency_callback!(reflection, options)
       end
-      add_dependency_callback!(reflection, options)
       args << options
       has_many_without_restrict(*args, &extension)
     end
 
     def has_and_belongs_to_many_with_restrict(*args, &extension)
       options = args.extract_options! || {}
-      reflection = if active_record_4?
-        raise ArgumentError, "dependent_restrict doesn't work with has_and_belongs_to_many. Use equivalent rails 4.1 has_many :through" if ActiveRecord::Reflection.respond_to? :create
-        association_id, scope = *args
-        restrict_create_reflection(:has_and_belongs_to_many, association_id, scope || {}, options, self)
-      else
-        association_id = args.first
-        create_reflection(:has_and_belongs_to_many, association_id, options, self)
+      if VALID_DEPENDENTS.include?(options[:dependent].try(:to_sym))
+        reflection = if active_record_4?
+          raise ArgumentError, "dependent_restrict doesn't work with has_and_belongs_to_many. Use equivalent rails 4.1 has_many :through" if ActiveRecord::Reflection.respond_to? :create
+          association_id, scope = *args
+          restrict_create_reflection(:has_and_belongs_to_many, association_id, scope || {}, options, self)
+        else
+          association_id = args.first
+          create_reflection(:has_and_belongs_to_many, association_id, options, self)
+        end
+        add_dependency_callback!(reflection, options)
+        options.delete(:dependent)
       end
-      add_dependency_callback!(reflection, options)
-      options.delete(:dependent)
       args << options
       has_and_belongs_to_many_without_restrict(*args, &extension)
     end
