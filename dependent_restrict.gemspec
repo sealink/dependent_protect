@@ -1,12 +1,15 @@
-# -*- encoding: utf-8 -*-
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'dependent_restrict/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "dependent_restrict"
-  spec.version       = "0.2.2"
-  spec.authors       = ["Michael Noack"]
-  spec.email         = ["support@travellink.com.au"]
+  spec.version       = DependentRestrict::VERSION
   spec.description   = %q{This gem is not needed in Rails 3 as dependent => :raise is included in 3.0.}
   spec.summary       = %q{Add dependent restrict and improves functionality to ActiveRecord 2/3/4.x.}
+  spec.authors       = ["Michael Noack"]
+  spec.email         = ['support@travellink.com.au']
   spec.homepage      = 'http://github.com/sealink/dependent_restrict'
 
   spec.license       = "MIT"
@@ -16,12 +19,13 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "activerecord", ">= 3.0"
-  spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "rspec"
-  spec.add_development_dependency "simplecov"
-  spec.add_development_dependency "simplecov-rcov"
-  spec.add_development_dependency "coveralls"
+  spec.add_dependency 'activerecord', '>= 3.0', '< 5.0.0'
+
+  spec.add_development_dependency 'bundler'
+  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'simplecov-rcov'
+  spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'sqlite3'
 end

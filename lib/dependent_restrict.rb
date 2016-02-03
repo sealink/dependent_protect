@@ -2,8 +2,6 @@ require 'active_record'
 require 'dependent_restrict/delete_restriction_error'
 
 module DependentRestrict
-  VERSION = '0.2.2'
-
   def self.included(base)
     super
     base.extend(ClassMethods)
