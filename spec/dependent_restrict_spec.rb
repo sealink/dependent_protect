@@ -137,6 +137,7 @@ describe DependentRestrict do
 
       context "using i18n" do
         before do
+          I18n.available_locales = [:en, :br]
           I18n.backend.store_translations(:br, {
             :dependent_restrict => {
               :basic_message => {
