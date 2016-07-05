@@ -40,7 +40,15 @@ describe DependentRestrict do
 
     after do
       [OrderInvoice, Order, Category, ProductsCategory, Product].each(&:delete_all)
-      %w(OrderInvoice Order Category ProductsCategory Product).each { |klass| Object.send(:remove_const, klass) }
+      classes_to_remove = %w(
+        OrderInvoice
+        Order
+        Category
+        ProductsCategory
+        Product
+        CategoryOrdersAssociationExtension
+      )
+      classes_to_remove.each { |klass| Object.send(:remove_const, klass) }
     end
 
 
