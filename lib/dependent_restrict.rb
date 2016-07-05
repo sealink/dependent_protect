@@ -7,11 +7,6 @@ module DependentRestrict
     base.extend(ClassMethods)
 
     base.class_eval do
-      class << self
-        alias_method_chain :has_one, :restrict
-        alias_method_chain :has_many, :restrict
-        alias_method_chain :has_and_belongs_to_many, :restrict
-      end
     end
   end
 
@@ -21,7 +16,7 @@ module DependentRestrict
     # We should be aliasing configure_dependency_for_has_many but that method
     # is private so we can't. We alias has_many instead trying to be as fair
     # as we can to the original behaviour.
-    def has_one_with_restrict(*args, &extension)
+    def has_one(*args, &extension)
       options = args.extract_options! || {}
       if VALID_DEPENDENTS.include?(options[:dependent].try(:to_sym))
         reflection = if active_record_4?
@@ -34,10 +29,10 @@ module DependentRestrict
         add_dependency_callback!(reflection, options)
       end
       args << options
-      has_one_without_restrict(*args, &extension)
+      super(*args, &extension)
     end
 
-    def has_many_with_restrict(*args, &extension)
+    def has_many(*args, &extension)
       options = args.extract_options! || {}
       if VALID_DEPENDENTS.include?(options[:dependent].try(:to_sym))
         reflection = if active_record_4?
@@ -50,10 +45,10 @@ module DependentRestrict
         add_dependency_callback!(reflection, options)
       end
       args << options
-      has_many_without_restrict(*args, &extension)
+      super(*args, &extension)
     end
 
-    def has_and_belongs_to_many_with_restrict(*args, &extension)
+    def has_and_belongs_to_many(*args, &extension)
       options = args.extract_options! || {}
       if VALID_DEPENDENTS.include?(options[:dependent].try(:to_sym))
         reflection = if active_record_4?
@@ -68,7 +63,7 @@ module DependentRestrict
         options.delete(:dependent)
       end
       args << options
-      has_and_belongs_to_many_without_restrict(*args, &extension)
+      super(*args, &extension)
     end
 
     private
@@ -87,7 +82,7 @@ module DependentRestrict
             raise ActiveRecord::Rollback
           end
         end
-        before_destroy method_name
+        before_destroy method_name.to_sym
       when :restrict, :restrict_with_exception
         options.delete(:dependent)
         define_method(method_name) do
@@ -96,12 +91,12 @@ module DependentRestrict
             raise ActiveRecord::DetailedDeleteRestrictionError.new(name, self)
           end
         end
-        before_destroy method_name
+        before_destroy method_name.to_sym
       end
     end
 
     def active_record_4?
-      ::ActiveRecord::VERSION::MAJOR == 4
+      ::ActiveRecord::VERSION::MAJOR >= 4
     end
 
     def restrict_create_reflection(*args)
