@@ -23,7 +23,7 @@ describe DependentRestrict do
         end
       end
 
-      class ProductsCategory < ActiveRecord::Base
+      class CategoriesProduct < ActiveRecord::Base
         belongs_to :product
         belongs_to :category
       end
@@ -39,12 +39,12 @@ describe DependentRestrict do
     end
 
     after do
-      [OrderInvoice, Order, Category, ProductsCategory, Product].each(&:delete_all)
+      [OrderInvoice, Order, Category, CategoriesProduct, Product].each(&:delete_all)
       classes_to_remove = %w(
         OrderInvoice
         Order
         Category
-        ProductsCategory
+        CategoriesProduct
         Product
         CategoryOrdersAssociationExtension
       )

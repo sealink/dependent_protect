@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(:version => 1) do
   create_table :products do |t|
   end
 
-  create_table :products_categories do |t|
+  create_table :categories_products do |t|
     t.integer :product_id, :category_id
   end
 end
