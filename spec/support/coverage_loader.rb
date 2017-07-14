@@ -1,4 +1,5 @@
 require 'simplecov-rcov'
 require 'coveralls'
 require 'coverage/kit'
-Coverage::Kit.setup(minimum_coverage: 85.2)
+minimum_coverage = ActiveRecord::VERSION::MAJOR >= 4 ? 92.2 : 86.6
+Coverage::Kit.setup(minimum_coverage: minimum_coverage)

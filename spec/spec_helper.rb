@@ -8,6 +8,7 @@
 require 'rubygems'
 require 'bundler/setup'
 
+require 'active_record'
 require 'support/coverage_loader'
 
 require 'dependent_restrict'
