@@ -6,4 +6,10 @@ This changelog adheres to [Keep a CHANGELOG](http://keepachangelog.com/).
 ## Unreleased
 ### Added
 - Support has and belongs to many in rails 4+
+- Enforce minimum coverage in tests
 - [TT-1392] Changelog file
+
+## 0.2.3
+### Added
+- Support rails 5
+- Improve testing of ruby/rails versions
