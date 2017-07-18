@@ -18,33 +18,35 @@ describe DependentRestrict do
       end
 
       class Category < ActiveRecord::Base
+        has_and_belongs_to_many :products
+
         def to_s
           "Category #{id}"
         end
       end
 
-      class ProductsCategory < ActiveRecord::Base
+      class CategoriesProduct < ActiveRecord::Base
         belongs_to :product
         belongs_to :category
       end
 
       class Product < ActiveRecord::Base
-        if ActiveRecord::Reflection.respond_to? :create
-          has_many :categories, :through => :products_categories
-        else
-          has_and_belongs_to_many :categories
+        has_and_belongs_to_many :categories
+
+        def to_s
+          "Product #{id}"
         end
       end
 
     end
 
     after do
-      [OrderInvoice, Order, Category, ProductsCategory, Product].each(&:delete_all)
+      [OrderInvoice, Order, Category, CategoriesProduct, Product].each(&:delete_all)
       classes_to_remove = %w(
         OrderInvoice
         Order
         Category
-        ProductsCategory
+        CategoriesProduct
         Product
         CategoryOrdersAssociationExtension
       )
@@ -87,6 +89,12 @@ describe DependentRestrict do
           end
 
           has_many :order_invoices, :through => :orders, :dependent => :restrict_with_exception
+
+          has_and_belongs_to_many :products, dependent: :restrict_with_exception
+        end
+
+        class Product < ActiveRecord::Base
+          has_and_belongs_to_many :categories
         end
       end
 
@@ -95,7 +103,26 @@ describe DependentRestrict do
       end
 
       it 'should create the reflections on Category' do
-        expect(Category.reflect_on_all_associations.map(&:name)).to eq [:orders, :order_invoices]
+        expect(Category.reflect_on_all_associations.map(&:name)).to eq [:products, :orders, :order_invoices]
+      end
+
+      it 'should restrict has_and_belongs_to_many relationships' do
+        product = Product.create!
+        category = Category.create!
+        category.products = [product]
+
+        expect { category.reload.destroy }.to raise_error(
+                                                  ActiveRecord::DetailedDeleteRestrictionError,
+                                                  'Cannot delete record because dependent products exists'
+                                              )
+        begin
+          category.destroy
+        rescue ActiveRecord::DetailedDeleteRestrictionError => e
+          expect(e.detailed_message).to eq "Cannot delete record because dependent products exists\n\n\nThese include:\n1: Product 1"
+        end
+
+        Product.destroy_all
+        expect { category.reload.destroy }.to_not raise_error
       end
 
       it 'should restrict has_many relationships' do
